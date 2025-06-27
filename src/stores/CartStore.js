@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { groupBy } from 'lodash';
+import { groupBy, sumBy } from 'lodash';
 
 export const useCartStore = defineStore("CartStore", {
   state: () => {
@@ -13,14 +13,36 @@ export const useCartStore = defineStore("CartStore", {
     isEmpty: (state) => state.count === 0,
     grouped: (state) => groupBy(state.items, (item) => item.name),
     groupCount: (state) => (name) => state.grouped[name].length,
+    totalPrice: (state) => sumBy(state.items, (item) => item.price)
   },
 
   actions: {
     addItems(count, item) {
       count = parseInt(count)
       for (let i = 0; i < count; i++) {
-        this.items.push({ ...item }) // clone the item to aviod ref issues
+        this.items.push({ ...item }) // clone the item to avoid ref issues
       }
-    }
+    },
+
+    /**
+     * Removes all quantities of the item
+     * @param {*} name Item name to remove
+     */
+    removeAllItem(name) {
+      this.items = this.items.filter((item) => item.name !== name)
+    },
+
+    /**
+     * Remove a single item
+     * @param {*} name Item name to remove
+     */
+    removeItem(name) {
+      const index = this.items.findIndex(item => item.name === name)
+      console.log(index)
+      if (index !== -1) {
+        this.items.splice(index, 1);
+      }
+    },
+
   }
 });

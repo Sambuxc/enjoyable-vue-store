@@ -20,6 +20,9 @@ defineEmits(["updateCount", "clear"]);
       <span class="ml-4" @click="$emit('clear')">
         <fa icon="trash-alt" />
       </span>
+      <span class="ml-4" @click="$emit('clearAll')">
+        <fa icon="times" />X
+      </span>
     </span>
   </li>
 </template>
