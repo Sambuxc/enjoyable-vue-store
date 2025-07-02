@@ -9,6 +9,17 @@ const cartStore = useCartStore()
 const productStore = useProductStore()
 productStore.fill()
 
+cartStore.$onAction (({ name, args, after, onError}) => {
+  if (name === 'addItems') {
+    after(() => {
+      // This will run after the action is completed
+      alert(`Added ${args[0]} items to cart`)
+      // here we can implement a toast msg notification, logging to analytics
+      // or if onError, then log the error somewhere
+    })
+  }
+})
+
 </script>
 
 <template>
