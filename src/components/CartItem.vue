@@ -17,11 +17,11 @@ defineEmits(["updateCount", "clear"]);
       <span class="inline-block w-12 text-right"
         >${{ count * product.price }}</span
       >
-      <span class="ml-4" @click="$emit('clear')">
+      <span class="ml-4 cursor-pointer" @click="$emit('clear')">
         <fa icon="trash-alt" />
       </span>
-      <span class="ml-4" @click="$emit('clearAll')">
-        <fa icon="times" />X
+      <span class="ml-4 cursor-pointer" @click="$emit('clearAll')">
+        <i class="fas fa-close">X</i>
       </span>
     </span>
   </li>
