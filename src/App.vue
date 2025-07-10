@@ -12,6 +12,7 @@ productStore.fill()
 
 const doingHistory = ref(false)
 const cartHistory = reactive([]) // used to save the complete state at each mutation event using $subscribe
+const cartFuture = reactive([])
 cartHistory.push(JSON.stringify(cartStore.$state)) // save a copy of the stores starting state
 
 /**
@@ -20,10 +21,19 @@ cartHistory.push(JSON.stringify(cartStore.$state)) // save a copy of the stores 
 const undoLastAction = () => {
   if(cartHistory.length === 1) return
   doingHistory.value = true
-  // undo the last state change from the history
-  cartHistory.pop()
+  // undo the last state change from the history and save for redo
+  cartFuture.push(cartHistory.pop())
   // add the last history item to the state
   cartStore.$state = JSON.parse(cartHistory.at(-1))
+  doingHistory.value = false
+}
+
+const redoLastAction = () => {
+  const latestState = cartFuture.pop()
+  if(!latestState) return
+  doingHistory.value = true
+  cartHistory.push(latestState) // keeps history track of the state
+  cartStore.$state = JSON.parse(latestState) // updates the store with the redo state
   doingHistory.value = false
 }
 
@@ -38,6 +48,7 @@ cartStore.$subscribe(
     // save the state in history for future reference
     if (!doingHistory.value) {
       cartHistory.push(JSON.stringify(state)) // stringify to prevent objects being accessed by reference
+      cartFuture.splice(0, cartFuture.length) // resets the future state
     }
 })
 
@@ -86,8 +97,9 @@ cartStore.$onAction (
 <template>
   <div class="container">
     <TheHeader />
-    <AppButton class="text-right mb-2" @click="undoLastAction">Undo</AppButton>
-    <ul class="sm:flex flex-wrap lg:flex-nowrap gap-5">
+    <AppButton class="float-left mb-2" @click="undoLastAction">Undo</AppButton>
+    <AppButton class="float-right mb-2" @click="redoLastAction">Redo</AppButton>
+    <ul class="sm:flex flex-wrap lg:flex-nowrap gap-5 clear-both">
       <ProductCard
         v-for="product in productStore.products"
         :key="product.name"
