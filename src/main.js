@@ -10,10 +10,14 @@ import "./assets/main.pcss";
 import AppButton from "./components/AppButton.vue";
 import AppCountInput from "./components/AppCountInput.vue";
 import AppModalOverlay from "./components/AppModalOverlay.vue";
+import { piniaHistoryPlugin } from "./plugins/PiniaHistoryPlugin";
+
+const pinia = createPinia()
+pinia.use(piniaHistoryPlugin)
 
 // Init App
 createApp(App)
-  .use(createPinia()) // Pinia for state management
+  .use(pinia) // Pinia for state management
   .use(FontAwesomePlugin)
   .component("AppButton", AppButton)
   .component("AppCountInput", AppCountInput)
